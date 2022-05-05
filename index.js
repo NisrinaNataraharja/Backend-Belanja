@@ -1,15 +1,12 @@
 require('dotenv').config()
-// const productController =  require('./src/controller/products')
-// const commonMid = require('./src/middlewares/common')
-// const categoryController = require('./src/controller/category')
-// const getProduct = require('./src/controller/products')
+//
 const express = require('express')
 const cors = require('cors')
 const createError = require('http-errors')
 const morgan = require('morgan')
 const categoryRouter = require('./src/routes/category')
 const productsRouter = require('./src/routes/products')
-// const commonMid = require('./src/middlewares/common')
+const transactionRouter = require('./src/routes/transaction')
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -18,29 +15,10 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan('dev'))
 
-// app.use(commonMid.myCors)
-// app.use(cors())
-// app.use('/coba',commonMid.myMiddle)
-// // app.use(myMiddle)
-
-// app.get('/helo',commonMid.myMiddle, (req, res, next)=>{
-//     res.send('hello word')
-// })
-
-// products
-// app.get('/products',getProduct)
-// app.post('/products', commonMid.validate, productController.insert)
-// app.put('/products/:id', productController.update)
-// app.delete('/products/:idproduct',productController.delete)
-
-// category
-
-// app.get('/category', categoryController.getCategory)
-// app.post('/category', categoryController.insertCategory)
-// app.put('/category/:id', categoryController.updateCategory)
-// app.delete('/category/:id', categoryController.deleteCategory)
+//
 app.use('/category', categoryRouter)
 app.use('/products', productsRouter)
+app.use('/transaction', transactionRouter)
 
 app.all('*', (req, res, next) => {
   next(new createError.NotFound())

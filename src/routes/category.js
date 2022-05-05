@@ -6,7 +6,7 @@ const categoryControler = require('../controller/category')
 router
   .get('/', categoryControler.getCategory)
   .post('/', categoryControler.insertCategory)
-// .put('/:id', categoryControler.updateCategory)
-  .delete('/:id', categoryControler.deleteCategory)
+  .put('/:idCategory', categoryControler.updateCategory)
+  .delete('/:idCategory', categoryControler.deleteCategory)
 
 module.exports = router

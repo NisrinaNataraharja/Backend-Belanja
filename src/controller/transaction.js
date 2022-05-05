@@ -1,18 +1,17 @@
-// const pool = require('../config/db')
 const createError = require('http-errors')
-const categoryModel = require('../models/category')
+const transactionModel = require('../models/transaction')
 const commonHelper = require('../helper/common')
 const errorServ = new createError.InternalServerError()
 
-exports.getCategory = async (req, res, next) => {
+exports.selectTransaction = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1
     const limit = parseInt(req.query.limit) || 5
     const offset = (page - 1) * limit
-    const result = await categoryModel.selectCategory({ offset, limit })
+    const result = await transactionModel.selectTransaction({ offset, limit })
 
     // paginatino
-    const { rows: [count] } = await categoryModel.countCategory()
+    const { rows: [count] } = await transactionModel.countTransaction()
     const totalData = parseInt(count.total)
     const totalPage = Math.ceil(totalData / limit)
     const pagination = {
@@ -29,13 +28,19 @@ exports.getCategory = async (req, res, next) => {
   }
 }
 
-exports.insertCategory = (req, res, next) => {
-  const { categoryName } = req.body
+exports.insertTransaction = (req, res, next) => {
+  const { productId, userId, quantity, totalShopping, deliveryCost, orderStatus, paymentMethod } = req.body
 
   const data = {
-    categoryName
+    productId, 
+    userId, 
+    quantity, 
+    totalShopping, 
+    deliveryCost, 
+    orderStatus, 
+    paymentMethod
   }
-  categoryModel.insertCategory(data)
+  transactionModel.insertTransaction(data)
     .then(() => {
       commonHelper.response(res, data, 201, 'insert data success')
     })
@@ -45,10 +50,10 @@ exports.insertCategory = (req, res, next) => {
     })
 }
 
-exports.updateCategory = (req, res, next) => {
-  const idCategory = req.params.idCategory
-  const categoryName = req.body.categoryName
-  categoryModel.updateCategory({ idCategory, categoryName })
+exports.updateTransaction = (req, res, next) => {
+  const idTransaction = req.params.idTransaction
+  const { productId, userId, quantity, totalShopping, deliveryCost, orderStatus, paymentMethod } = req.body
+  transactionModel.updateTransaction({ idTransaction, productId, userId, quantity, totalShopping, deliveryCost, orderStatus, paymentMethod })
     .then(() => {
       res.json({
         message: 'data berhasil di update'
@@ -60,9 +65,9 @@ exports.updateCategory = (req, res, next) => {
     })
 }
 
-exports.deleteCategory = (req, res, next) => {
-  const idCategory = req.params.idCategory
-  categoryModel.deleteCategory(idCategory)
+exports.deleteTransaction = (req, res, next) => {
+  const idTransaction = req.params.idTransaction
+  transactionModel.deleteTransaction(idTransaction)
     .then(() => {
       res.json({
         message: 'data berhasil di hapus'
