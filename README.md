@@ -1,6 +1,6 @@
 # Backend-Belanja
 
-Back end of Belanja Online Shop.
+Backend of Belanja Online Shop.
 
 ## Description
 
