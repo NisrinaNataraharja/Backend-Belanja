@@ -2,8 +2,6 @@ const express = require('express')
 const transactionController = require('../controller/transaction')
 const router = express.Router()
 
-
-//  ----> /category.....
 router
   .get('/', transactionController.selectTransaction)
   .post('/', transactionController.insertTransaction)

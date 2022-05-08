@@ -1,18 +1,17 @@
 const createError = require('http-errors')
-const userModel = require('../models/user')
+const userAddressModel = require('../models/userAddress')
 const commonHelper = require('../helper/common')
-const { v4: uuidv4 } = require('uuid');
 const errorServ = new createError.InternalServerError()
 
-exports.selectUser = async (req, res, next) => {
+exports.selectUserAddress = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1
     const limit = parseInt(req.query.limit) || 5
     const offset = (page - 1) * limit
-    const result = await userModel.selectUser({ offset, limit })
+    const result = await userAddressModel.selectUserAddress({ offset, limit })
 
     // paginatino
-    const { rows: [count] } = await userModel.countUser()
+    const { rows: [count] } = await userAddressModel.countUserAddress()
     const totalData = parseInt(count.total)
     const totalPage = Math.ceil(totalData / limit)
     const pagination = {
@@ -29,22 +28,20 @@ exports.selectUser = async (req, res, next) => {
   }
 }
 
-exports.insertUser = async(req, res, next) => {
-  const { nameStore, descriptionStore, email, password, role, phone, gender, birthday, name } = req.body
+exports.insertUserAddress = (req, res, next) => {
+  const { saveAs, userId, recieptName, address, recieptPhone, postalCode, city, isPrimary } = req.body
 
   const data = {
-    idUser: uuidv4(), 
-    nameStore, 
-    descriptionStore, 
-    email, 
-    password: await commonHelper.hashPassword(password), 
-    role, 
-    phone, 
-    gender, 
-    birthday,
-    name
+    saveAs, 
+    userId, 
+    recieptName, 
+    address, 
+    recieptPhone, 
+    postalCode, 
+    city, 
+    isPrimary
   }
-  userModel.insertUser(data)
+  userAddressModel.insertUserAddress(data)
     .then(() => {
       commonHelper.response(res, data, 201, 'insert data success')
     })
@@ -54,10 +51,10 @@ exports.insertUser = async(req, res, next) => {
     })
 }
 
-exports.updateUser = (req, res, next) => {
+exports.updateUserAddress = (req, res, next) => {
   const id = req.params.id
-  const { idUser, nameStore, descriptionStore, email, password, role, phone, gender, birthday, name } = req.body
-  userModel.updateUser({ id, idUser, nameStore, descriptionStore, email, password, role, phone, gender, birthday, name })
+  const { saveAs, userId, recieptName, address, recieptPhone, postalCode, city, isPrimary } = req.body
+  userAddressModel.updateUserAddress({ id, saveAs, userId, recieptName, address, recieptPhone, postalCode, city, isPrimary })
     .then(() => {
       res.json({
         message: 'update data success'
@@ -69,9 +66,9 @@ exports.updateUser = (req, res, next) => {
     })
 }
 
-exports.deleteUser = (req, res, next) => {
+exports.deleteUserAddress = (req, res, next) => {
   const id = req.params.id
-  userModel.deleteUser(id)
+  userAddressModel.deleteUserAddress(id)
     .then(() => {
       res.json({
         message: 'delete data success'

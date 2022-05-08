@@ -1,18 +1,16 @@
 const createError = require('http-errors')
-const userModel = require('../models/user')
+const cartModel = require('../models/cart')
 const commonHelper = require('../helper/common')
-const { v4: uuidv4 } = require('uuid');
 const errorServ = new createError.InternalServerError()
 
-exports.selectUser = async (req, res, next) => {
-  try {
+exports.selectCart = async (req, res, next) => {
+  try { 
     const page = parseInt(req.query.page) || 1
     const limit = parseInt(req.query.limit) || 5
     const offset = (page - 1) * limit
-    const result = await userModel.selectUser({ offset, limit })
+    const result = await cartModel.selectCart({ offset, limit })
 
-    // paginatino
-    const { rows: [count] } = await userModel.countUser()
+    const { rows: [count] } = await cartModel.countCart()
     const totalData = parseInt(count.total)
     const totalPage = Math.ceil(totalData / limit)
     const pagination = {
@@ -29,22 +27,16 @@ exports.selectUser = async (req, res, next) => {
   }
 }
 
-exports.insertUser = async(req, res, next) => {
-  const { nameStore, descriptionStore, email, password, role, phone, gender, birthday, name } = req.body
+exports.insertCart = (req, res, next) => {
+  const { userId, productId, quantity, totalPrice } = req.body
 
   const data = {
-    idUser: uuidv4(), 
-    nameStore, 
-    descriptionStore, 
-    email, 
-    password: await commonHelper.hashPassword(password), 
-    role, 
-    phone, 
-    gender, 
-    birthday,
-    name
+    userId, 
+    productId, 
+    quantity, 
+    totalPrice
   }
-  userModel.insertUser(data)
+  cartModel.insertCart(data)
     .then(() => {
       commonHelper.response(res, data, 201, 'insert data success')
     })
@@ -54,10 +46,10 @@ exports.insertUser = async(req, res, next) => {
     })
 }
 
-exports.updateUser = (req, res, next) => {
-  const id = req.params.id
-  const { idUser, nameStore, descriptionStore, email, password, role, phone, gender, birthday, name } = req.body
-  userModel.updateUser({ id, idUser, nameStore, descriptionStore, email, password, role, phone, gender, birthday, name })
+exports.updateCart = (req, res, next) => {
+  const cartId = req.params.cartId
+  const { userId, productId, quantity, totalPrice } = req.body
+  cartModel.updateCart({ cartId, userId, productId, quantity, totalPrice })
     .then(() => {
       res.json({
         message: 'update data success'
@@ -69,9 +61,9 @@ exports.updateUser = (req, res, next) => {
     })
 }
 
-exports.deleteUser = (req, res, next) => {
-  const id = req.params.id
-  userModel.deleteUser(id)
+exports.deleteCart = (req, res, next) => {
+  const cartId = req.params.cartId
+  cartModel.deleteCart(cartId)
     .then(() => {
       res.json({
         message: 'delete data success'

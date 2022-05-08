@@ -1,12 +1,21 @@
 const pool = require('../config/db')
 
-const selectProducts = ({ limit, offset }) => {
-  return pool.query('SELECT * FROM products LIMIT $1 OFFSET $2', [limit, offset])
-}
-
-// const getProductById = (id) => {
-//   return pool.query('SELECT products.*, category.name AS name_category FROM products INNER JOIN category ON products.id_category = category.id WHERE products.id = $1', [id])
+// const selectProducts = ({ limit, offset }) => {
+//   return pool.query('SELECT * FROM products LIMIT $1 OFFSET $2', [limit, offset])
 // }
+
+const selectProductWithCondition = (condition) => {
+  console.log(condition);
+  return pool.query(`
+  SELECT p.*
+  FROM products p  
+  LEFT JOIN category c on p.categoryid = c."idCategory"
+  WHERE p.nameproduct ILIKE '%${condition.search}%' 
+  GROUP BY p.id, p.nameproduct, c."categoryName", p.description, p.rating, p.price, p.stock, p.condition, p.seller, p.brand, p.status
+  ORDER BY ${condition.sort} ${condition.order}
+  LIMIT ${condition.limit} OFFSET ${condition.offset}
+  `)
+}
 
 const insertProducts = ({ categoryid, nameproduct, description, rating, price, stock, size, color, condition, seller, brand, status, isarchieve, created_at }) => {
   return pool.query('INSERT INTO products (categoryid, nameproduct, description, rating, price, stock, size, color, condition, seller, brand, status, isarchieve, created_at) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)', [categoryid, nameproduct, description, rating, price, stock, size, color, condition, seller, brand, status, isarchieve, created_at])
@@ -25,8 +34,8 @@ const countProducts = () => {
 }
 
 module.exports = {
-  selectProducts,
-  // getProductById,
+  ///selectProducts,
+  selectProductWithCondition,
   updateProducts,
   insertProducts,
   deleteProducts,

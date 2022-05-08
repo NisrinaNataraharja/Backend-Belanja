@@ -10,7 +10,6 @@ exports.selectTransaction = async (req, res, next) => {
     const offset = (page - 1) * limit
     const result = await transactionModel.selectTransaction({ offset, limit })
 
-    // paginatino
     const { rows: [count] } = await transactionModel.countTransaction()
     const totalData = parseInt(count.total)
     const totalPage = Math.ceil(totalData / limit)
@@ -56,7 +55,7 @@ exports.updateTransaction = (req, res, next) => {
   transactionModel.updateTransaction({ idTransaction, productId, userId, quantity, totalShopping, deliveryCost, orderStatus, paymentMethod })
     .then(() => {
       res.json({
-        message: 'data berhasil di update'
+        message: 'update data success'
       })
     })
     .catch((error) => {
@@ -70,7 +69,7 @@ exports.deleteTransaction = (req, res, next) => {
   transactionModel.deleteTransaction(idTransaction)
     .then(() => {
       res.json({
-        message: 'data berhasil di hapus'
+        message: 'delete data success'
       })
     })
     .catch((error) => {

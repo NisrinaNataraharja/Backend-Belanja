@@ -1,4 +1,4 @@
-// const pool = require('../config/db')
+
 const createError = require('http-errors')
 const categoryModel = require('../models/category')
 const commonHelper = require('../helper/common')
@@ -11,7 +11,7 @@ exports.getCategory = async (req, res, next) => {
     const offset = (page - 1) * limit
     const result = await categoryModel.selectCategory({ offset, limit })
 
-    // paginatino
+   
     const { rows: [count] } = await categoryModel.countCategory()
     const totalData = parseInt(count.total)
     const totalPage = Math.ceil(totalData / limit)
@@ -50,9 +50,7 @@ exports.updateCategory = (req, res, next) => {
   const categoryName = req.body.categoryName
   categoryModel.updateCategory({ idCategory, categoryName })
     .then(() => {
-      res.json({
-        message: 'data berhasil di update'
-      })
+      commonHelper.response(res, categoryName, 202, 'update data success')
     })
     .catch((error) => {
       console.log(error)
@@ -65,7 +63,7 @@ exports.deleteCategory = (req, res, next) => {
   categoryModel.deleteCategory(idCategory)
     .then(() => {
       res.json({
-        message: 'data berhasil di hapus'
+        message: 'delete data success'
       })
     })
     .catch((error) => {
