@@ -45,7 +45,7 @@ npm run dev
 npm start
 ```
 
-## 🔖 Standard Response & Preview Request By Postman
+##  Standard Response & Preview Request By Postman
 #### Standard Response API
 ```json
 {
@@ -56,7 +56,7 @@ npm start
 ```
 Object data contains content according to the request
 
-## ⛏️ Built Using
+##  Built Using
 
 - [ExpressJS](https://expressjs.com)
 - [CORS Package](https://www.npmjs.com/package/cors)
