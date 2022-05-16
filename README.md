@@ -1,37 +1,69 @@
-# Backend-Belanja
+## About
+Backend Belanja 
 
-Backend of Belanja Online Shop.
+## Installation
 
-## Description
+Follow the steps below
 
-This is the backend of Belanja shop.
-
-## Getting Started
-
-### Installing
-
-* How/where to download your program
-* Any modifications needed to be made to files/folders
-
-### Executing program
-
-* How to run the program
-* Step-by-step bullets
+1. Clone this repo
 ```
-code blocks for commands
+git clone this repo
 ```
 
-## Help
-
-Any advise for common problems or issues.
+2. Install module & Import Database
+##### Install Module
 ```
-command to run if program contains helper info
+npm install
 ```
 
-## Authors
+3. Create env file
+```
+# ---------------------------------------
+#               CONFIG DB
+# ---------------------------------------
+DB_USERNAME  = 
+DB_HOST = 
+DB_DATABASE = 
+DB_PASSWORD = 
+DB_PORT = 
+PORT = 
 
-Nisrina Nataraharja
 
-## Version History
+Detail CONFIG GENERAL
+| EXAMPLE URL | [http://localhost:4000]() |
+| :-------------: |:-------------:|
+| PORT | 4000 |
+| HOST | [http://localhost]() |
 
-* 0.0
+4. Done, You can run it in the way below
+##### Developer Mode (with nodemon)
+```
+npm run dev
+```
+##### Production Mode (only node)
+```
+npm start
+```
+
+## 🔖 Standard Response & Preview Request By Postman
+#### Standard Response API
+```json
+{
+    "status": true,
+    "message": "success register",
+    "data": [object Object]
+}
+```
+Object data contains content according to the request
+
+## ⛏️ Built Using
+
+- [ExpressJS](https://expressjs.com)
+- [CORS Package](https://www.npmjs.com/package/cors)
+- [Morgan Package](https://www.npmjs.com/package/morgan)
+- [DotEnv Package](https://www.npmjs.com/package/dotenv)
+- [JWT Package](https://www.npmjs.com/package/jsonwebtoken)
+- [Nodemailer Package](https://www.npmjs.com/package/nodemailer)
+- [UUID Package](https://www.npmjs.com/package/uuid)
+- [Multer Package](https://www.npmjs.com/package/multer)
+- [Bcrypt Package](https://www.npmjs.com/package/bcrypt))
