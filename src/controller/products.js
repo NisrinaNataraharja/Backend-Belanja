@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const createError = require('http-errors')
 const productsModel = require('../models/products')
 const commonHelper = require('../helper/common')
@@ -50,7 +51,6 @@ exports.selectProductsWithCondition = async (req, res, next) => {
         }
 
         commonHelper.response(res, result.rows, 200, 'get data success', pagination)
-        console.log(result);
   } catch (error) {
     console.log(error)
     next(errorServ)
@@ -58,8 +58,11 @@ exports.selectProductsWithCondition = async (req, res, next) => {
 }
 
 
-exports.insertProducts = (req, res, next) => {
+exports.insertProducts = async (req, res, next) => {
+  try {
+    console.log(req.file);
   const { categoryid, nameproduct, description, rating, price, stock, size, color, condition, seller, brand, status, isarchieve, created_at } = req.body
+  const image = JSON.parse(req.body.image)
 
   const data = {
     categoryid,
@@ -75,27 +78,28 @@ exports.insertProducts = (req, res, next) => {
     brand,
     status,
     isarchieve,
-    created_at
+    created_at,
+    image: JSON.stringify(
+      image.map((item) => `${process.env.HOST}/image/${item.image}`)
+    )
   }
-  productsModel.insertProducts(data)
-    .then(() => {
-      commonHelper.response(res, data, 201, 'insert data success')
-    })
-    .catch((error) => {
+   console.log(data);
+   await productsModel.insertProducts(data)
+   commonHelper.response(res, data, 201, 'insert data success')
+  } catch (error) {
       console.log(error)
       next(errorServ)
-    })
+  }
 }
 
+   
 exports.updateProducts = (req, res, next) => {
   const id = req.params.id
   const { categoryid, nameproduct, description, rating, price, stock, size, color, condition, seller, brand, status, isarchieve, created_at } = req.body
   productsModel.updateProducts({ id, categoryid, nameproduct, description, rating, price, stock, size, color, 
     condition, seller, brand, status, isarchieve, created_at})
     .then(() => {
-      res.json({
-        message: 'update data success'
-      })
+      commonHelper.response(res, null, 202, 'update data success')
     })
     .catch((error) => {
       console.log(error)
@@ -107,9 +111,7 @@ exports.deleteProducts = (req, res, next) => {
   const id = req.params.id
   productsModel.deleteProducts(id)
     .then(() => {
-      res.json({
-        message: 'delete data success'
-      })
+      commonHelper.response(res, null, 203, 'delete data success')
     })
     .catch((error) => {
       console.log(error)

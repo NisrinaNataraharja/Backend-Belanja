@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const response = (res, result, status, message, pagination) => {
     const resultPrint = {}
     resultPrint.status = 'success'
-    resultPrint.statuCode = status
+    resultPrint.statusCode = status
     resultPrint.data = result
     resultPrint.message = message || null
     if (pagination)resultPrint.pagination = pagination
@@ -14,7 +14,6 @@ const response = (res, result, status, message, pagination) => {
 const hashPassword = (password) => {
   return new Promise((resolve, reject) => {
     bcrypt.genSalt(10, function (err, salt) {
-      //console.log(salt)
       bcrypt.hash(password, salt, async function (err, hash) {
         if (!err) {
           resolve(hash)
