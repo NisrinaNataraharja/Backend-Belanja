@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 require('dotenv').config()
-
 const express = require('express')
 const helmet = require("helmet")
 const cors = require('cors')
@@ -9,38 +8,33 @@ const morgan = require('morgan')
 const mainRoute = require('./src/routes')
 const xss = require('xss-clean')
 const path = require('path')
-// const categoryRouter = require('./src/routes/category')
-// const productsRouter = require('./src/routes/products')
-// const transactionRouter = require('./src/routes/transaction')
-// const userRouter = require('./src/routes/user')
-// const userAddressRouter = require('./src/routes/userAddress')
-// const cartRouter = require('./src/routes/cart')
+const myCors = require('./src/middlewares/common')
+
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
-app.use(cors())
-app.use(helmet())
+app.use(cors(myCors))
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}))
 app.use(morgan('dev'))
 app.use(xss())
 
-
-
 //
 app.use('/v1', mainRoute)
-// app.use('/category', categoryRouter)
-// app.use('/products', productsRouter)
-// app.use('/transaction', transactionRouter)
-// app.use('/user', userRouter)
-// app.use('/userAddress', userAddressRouter)
-// app.use('/cart', cartRouter)
 
-app.use('/image', express.static(path.join(__dirname, '/upload')))
+app.use('/image', express.static(path.join(__dirname, '/upload/image')))
+app.use('/video', express.static(path.join(__dirname, '/upload/video')))
 app.all('*', (req, res, next) => {
   next(new createError.NotFound())
 })
+// app.use('/image', express.static(path.join(__dirname, '/upload')))
+// app.all('*', (req, res, next) => {
+//   next(new createError.NotFound())
+// })
 
 
 // eslint-disable-next-line no-unused-vars

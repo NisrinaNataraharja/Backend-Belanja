@@ -9,6 +9,7 @@ router
   .post('/register', register)
   .post('/login', login)
   .post('/refresh-token', refreshToken)
+  // .get('/activate',activate )
   .get('/profile', protect, profile)
   .delete('/:id', protect, deleteUser)
   .get('/', userController.selectUser)

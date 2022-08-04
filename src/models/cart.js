@@ -1,30 +1,38 @@
 const pool = require('../config/db')
 
-const selectCart = ({ limit, offset }) => {
-    return pool.query('SELECT * FROM cart LIMIT $1 OFFSET $2', [limit, offset])
-  }
-  
-  const insertCart = ({userId, productId, quantity, totalPrice}) => {
-    return pool.query('INSERT INTO cart ("userId", "productId", quantity, "totalPrice") VALUES($1, $2, $3, $4)', [userId, productId, quantity, totalPrice])
-  }
- 
-  const updateCart = ({ cartId, userId, productId, quantity, totalPrice }) => {
-    return pool.query('UPDATE cart SET "userId" = $1, "productId" = $2, quantity = $3, "totalPrice" = $4 WHERE "cartId" = $5', [cartId, userId, productId, quantity, totalPrice])
-  }
+const getCart = (id) => {
+  console.log('masuk get cart');
+  return pool.query(`SELECT cart."cartId", cart."userId", cart."productId", cart.quantity,
+  products.nameproduct, products.price, products.brand, products.image FROM cart INNER JOIN products ON cart."productId" = products.id
+  WHERE cart."userId" = $1`, [id])
+}
 
- 
-  const deleteCart = (cartId) => {
-    return pool.query('DELETE FROM cart WHERE "cartId"= $1', [cartId])
-  }
-  
-  const countCart = () => {
-    return pool.query('SELECT COUNT(*) AS total FROM cart')
-  }
-  
-  module.exports = {
-    selectCart,
-    insertCart,
-    updateCart,
-    deleteCart,
-    countCart
-  }
+const checkProductId = (productId, userId) => {
+  return pool.query('SELECT * FROM cart where cart."productId" = $1 AND cart."userId" = $2', [productId, userId])
+}
+
+const insertCart = ({ userId, productId, quantity }) => {
+  return pool.query('INSERT INTO cart ("userId", "productId", quantity) VALUES($1, $2, $3)', [userId, productId, quantity])
+}
+
+const deleteCart = (cartId) => {
+  return pool.query('DELETE FROM cart WHERE "cartId"= $1', [cartId])
+}
+
+const updateCartStock = (cartId, quantity) => {
+  pool.query('UPDATE cart set quantity = $1 WHERE "cartId" = $2', [quantity, cartId])
+}
+
+
+module.exports = {
+  getCart,
+  checkProductId,
+  insertCart,
+  deleteCart,
+  updateCartStock
+}
+
+
+
+
+

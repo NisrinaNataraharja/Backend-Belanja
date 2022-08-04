@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
 const sendEmail = async(email)=>{
@@ -10,15 +11,15 @@ const sendEmail = async(email)=>{
         secure: true,// true for 465, false for other ports
         auth: {
           user: 'nataraharjanisrina13@gmail.com', // generated ethereal user
-          pass: 'naninina123', // generated ethereal password
+          pass: process.env.EMAIL_PASS, // generated ethereal password
         },
       });
-      const token = jwt.sign({email:email}, 'emaildskf233r',{
+      const token = jwt.sign({email:email}, process.env.SECRET_KEY_EMAIL,{
         expiresIn: '24h'
       })
       // send mail with defined transport object
       let info = await transporter.sendMail({
-        from: '"Tokoku 👻" <nataraharjanisrina13@gmail.com>', // sender address
+        from: '"Belanja" <nataraharjanisrina13@gmail.com>', // sender address
         to: email, // list of receivers
         subject: "aktivasi user", // Subject line
         html: `<!DOCTYPE html>
@@ -52,7 +53,7 @@ const sendEmail = async(email)=>{
         </head>
         <body>
             <div class="container">
-                <a href="http://localhost:4000/user/active/${token}">klik aktif</a>
+                <a href="${process.env.HOST}/v1/user/activate?token=${token}">klik aktif</a>
             </div>
         </body>
         </html>`, // html body

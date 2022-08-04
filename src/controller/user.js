@@ -4,7 +4,7 @@ const createError = require('http-errors')
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs/dist/bcrypt');
 const { findByEmail, create } = require('../models/user')
-const {response, hashPassword} = require('../helper/common')
+const { response, hashPassword } = require('../helper/common')
 const userModel = require('../models/user')
 const jwt = require('jsonwebtoken')
 const authHelper = require('../helper/auth')
@@ -12,87 +12,113 @@ const { sendEmail } = require('../helper/mail')
 const errorServ = new createError.InternalServerError()
 
 
-exports.register = async (req, res, next) =>{
+exports.register = async (req, res, next) => {
   try {
-    const {idUser, nameStore, descriptionStore, email, password, role, phone, gender, birthday, name, city, imageUser, isActive} = req.body
-    const {rowCount} = await findByEmail(email)
+    const { idUser, nameStore, descriptionStore, email, password, role, phone, gender, birthday, name, city, imageUser, isActive } = req.body
+    const { rowCount } = await findByEmail(email)
     if (rowCount) {
       return next(createError(403, 'user already registered'))
     }
     const data = {
-      idUser: uuidv4(idUser), 
-      nameStore, 
-      descriptionStore, 
-      email, 
-      password: await hashPassword(password), 
-      role, 
-      phone, 
-      gender, 
-      birthday, 
-      name, 
-      city, 
-      imageUser, 
+      idUser: uuidv4(idUser),
+      nameStore,
+      descriptionStore,
+      email,
+      password: await hashPassword(password),
+      role,
+      phone,
+      gender,
+      birthday,
+      name,
+      city,
+      imageUser,
       isActive
     }
     create(data)
-    //sendEmail(email)
-    response(res, data.email, 201, 'user successfullyy register')
+    // sendEmail(email)
+    response(res, data.email, 201, 'successfully register')
   } catch (error) {
     console.log(error)
     next(errorServ)
   }
 }
 
-exports.login = async (req, res, next) =>{
+// exports.activate = async (req, res, next) => {
+//   try {
+//     const { token } = req.query
+//     if (token) {
+//       let decoded = jwt.verify(token, process.env.SECRET_KEY_EMAIL);
+//       const { rows: [user] } = await findByEmail(decoded.email)
+//       console.log(user);
+//       const data = {
+//         id: user.id,
+//         isActive: true
+//       }
+//       userModel.updateUser(data)
+//       return response(res, data, 200, 'Congrats your email have been activated!')
+//     }
+
+//   } catch (error) {
+//     console.log(error);
+//     next(errorServ)
+//   }
+// }
+
+
+exports.login = async (req, res, next) => {
   try {
-    const {email, password} = req.body
-  const {rows:[user]} = await findByEmail(email)
- if (!user) {
-   return response(res, null, 401, 'wrong email or password')
- }
- const validPassword = await bcrypt.compare(password, user.password) ;
- if (!validPassword) {
-   return response(res, null, 403, 'wrong email or password')
- }
- delete user.password
+    const { email, password } = req.body
+    const { rows: [user] } = await findByEmail(email)
+    if (!user) {
+      return response(res, null, 401, 'wrong email or password')
+    }
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return response(res, null, 403, 'wrong email or password')
+    }
+    // if ( user.isActive === false || user.isActive === null ) {
+    //   return response(res, null, 401, 'activate your email first')
+    // } 
+    delete user.password
 
-const payload ={
-  email: user.email,
-  role: user.role
-} 
- //generate token
-user.token = authHelper.generateToken(payload)
-user.refreshToken = authHelper.gerateRefreshToken(payload)
+    const payload = {
+      email: user.email,
+      id: user.id,
+      role: user.role
+    }
+    //generate token
+    user.token = authHelper.generateToken(payload)
+    user.refreshToken = authHelper.gerateRefreshToken(payload)
 
- response(res, user, 201, 'login success')
+    response(res, user, 201, 'login success')
 
   } catch (error) {
     console.log(error);
     next(errorServ)
   }
-} 
+}
 
-exports.profile = async(req, res, next)=>{
+exports.profile = async (req, res, next) => {
   const email = req.decoded.email
-  const {rows: [user]} = await findByEmail(email)
+  const { rows: [user] } = await findByEmail(email)
   delete user.password
   response(res, user, 200)
 }
 
 exports.deleteUser = (req, res, next) => {
-    const id = req.params.id
-    userModel.deleteUser(id)
-      .then(() => {
-        response(res, null, 203, 'delete user success')
-     
-      })
-      .catch((error) => {
-        console.log(error)
-        next(new createError.InternalServerError())
-      })
-  }
+  const id = req.params.id
+  userModel.deleteUser(id)
+    .then(() => {
+      response(res, null, 203, 'delete user success')
 
-exports.refreshToken = (req, res, next)=>{
+    })
+    .catch((error) => {
+      console.log(error)
+      next(new createError.InternalServerError())
+    })
+}
+
+exports.refreshToken = (req, res, next) => {
   const refreshToken = req.body.refreshToken
   const decoded = jwt.verify(refreshToken, process.env.SECRET_KEY_JWT)
   const payload = {
@@ -104,7 +130,7 @@ exports.refreshToken = (req, res, next)=>{
     refreshToken: authHelper.gerateRefreshToken(payload)
   }
   response(res, result, 200)
-} 
+}
 
 
 exports.selectUser = async (req, res, next) => {
@@ -124,8 +150,8 @@ exports.selectUser = async (req, res, next) => {
       totalData,
       totalPage
     }
-    
-   response(res, result.rows, 200, 'get data success', pagination)
+
+    response(res, result.rows, 200, 'get data success', pagination)
   } catch (error) {
     console.log(error)
     next(errorServ)
@@ -140,18 +166,18 @@ exports.selectUser = async (req, res, next) => {
 //       return next(createError(403, 'user already registered'))
 //     }
 //     const data = {
-//       idUser: uuidv4(idUser), 
-//       nameStore, 
-//       descriptionStore, 
-//       email, 
-//       password: hashPassword(password), 
-//       role, 
-//       phone, 
-//       gender, 
-//       birthday, 
-//       name, 
-//       city, 
-//       image, 
+//       idUser: uuidv4(idUser),
+//       nameStore,
+//       descriptionStore,
+//       email,
+//       password: hashPassword(password),
+//       role,
+//       phone,
+//       gender,
+//       birthday,
+//       name,
+//       city,
+//       image,
 //       isActive
 //     }
 //     await create(data)
@@ -173,14 +199,14 @@ exports.selectUser = async (req, res, next) => {
 //   const { nameStore, descriptionStore, email, password, role, phone, gender, birthday, name } = req.body
 
 //   const data = {
-//     idUser: uuidv4(), 
-//     nameStore, 
-//     descriptionStore, 
-//     email, 
-//     password: await commonHelper.hashPassword(password), 
-//     role, 
-//     phone, 
-//     gender, 
+//     idUser: uuidv4(),
+//     nameStore,
+//     descriptionStore,
+//     email,
+//     password: await commonHelper.hashPassword(password),
+//     role,
+//     phone,
+//     gender,
 //     birthday,
 //     name
 //   }
