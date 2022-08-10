@@ -3,7 +3,7 @@
 
   <h3 align="center">Blanja Rest API</h3>
   <p align="center">
-    <image align="center" width="200" src='' />
+    <image align="center" width="200" src='https://github.com/NisrinaNataraharja/react-Belanja/blob/main/public/ss/Logo.PNG' />
   </p>
 
 
