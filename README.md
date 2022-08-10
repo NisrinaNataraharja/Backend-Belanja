@@ -23,7 +23,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Tektok-Chat Rest API is server api that used in [`Blanja application`](https://my-belanja.netlify.app) . This server manage all function and endpoint in Blanja app such as create, add , update and delete products. Authentication about login, register and getting profile info.
+Blanja Rest API is server api that used in [`Blanja application`](https://my-belanja.netlify.app) . This server manage all function and endpoint in Blanja app such as create, add , update and delete products. Authentication about login, register and getting profile info.
 
 
 ### Built With
